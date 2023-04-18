@@ -70,6 +70,8 @@ public class Performer {
         this.imageUri = imageUri;
     }
 
+    // getImageName()
+
     public Genre getGenre() {
         return genre;
     }

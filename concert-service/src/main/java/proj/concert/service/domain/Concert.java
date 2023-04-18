@@ -113,6 +113,12 @@ public class Concert implements Comparable<Concert> {
         return performer;
     }
 
+    // getImageName()
+    // getPerformers()
+    // getDates()
+    // 
+    // 
+
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
