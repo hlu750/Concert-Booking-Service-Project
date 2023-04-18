@@ -1,5 +1,6 @@
 package proj.concert.service.domain;
 
+import proj.concert.common.dto.PerformerDTO;
 import proj.concert.common.types.Genre;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -23,27 +24,27 @@ public class Performer {
     @JsonProperty("name")
     private String name;
 
-    
-    @Column(name = "IMAGEURI")
-    @JsonProperty("imageUri")
-    private String imageUri;
+    @Column(name = "IMAGENAME")
+    @JsonProperty("imageName")
+    private String imageName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "GENRE")
     @JsonProperty("genre")
     private Genre genre;
 
+    @Column(name = "BLURB")
+    @JsonProperty("blurb")
+    private String blurb;
+
     public Performer() { }
 
-    public Performer(Long id, String name, String imageUri, Genre genre) {
+    public Performer(Long id, String name, String imageName, Genre genre, String blurb) {
         this.id = id;
         this.name = name;
-        this.imageUri = imageUri;
+        this.imageName = imageName;
         this.genre = genre;
-    }
-
-    public Performer(String name, String imageUri, Genre genre) {
-        this(null, name, imageUri, genre);
+        this.blurb = blurb;
     }
 
     public Long getId() {
@@ -62,15 +63,13 @@ public class Performer {
         this.name = name;
     }
 
-    public String getImageUri() {
-        return imageUri;
+    public String getImageName() {
+        return imageName;
     }
 
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
-
-    // getImageName()
 
     public Genre getGenre() {
         return genre;
@@ -80,6 +79,18 @@ public class Performer {
         this.genre = genre;
     }
 
+    public String getBlurb() {
+        return blurb;
+    }
+
+    public void setBlurb(String blurb) {
+        this.blurb = blurb;
+    }
+
+    public PerformerDTO convertToDTO() {
+		return new PerformerDTO(id, name, imageName, genre, blurb);
+	}
+
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
@@ -88,7 +99,9 @@ public class Performer {
         buffer.append(", name: ");
         buffer.append(name);
         buffer.append(", s3 image: ");
-        buffer.append(imageUri);
+        buffer.append(imageName);
+        buffer.append(", blurb: ");
+        buffer.append(blurb);
         buffer.append(", genre: ");
         buffer.append(genre.toString());
 

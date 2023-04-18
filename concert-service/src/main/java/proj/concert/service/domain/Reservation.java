@@ -2,10 +2,15 @@ package proj.concert.service.domain;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.*;
+
+import proj.concert.common.dto.BookingDTO;
+import proj.concert.common.dto.SeatDTO;
 
 @Entity
 @Table(name = "RESERVATION")
@@ -21,15 +26,15 @@ public class Reservation {
 
     @Column(name = "SEAT")
     @JsonProperty("seat")
-    private Seat seat;
+    private List<Seat> seats;
 
     public Reservation() {
     }
 
-    public Reservation(long id, LocalDateTime date, Seat seat) {
+    public Reservation(long id, LocalDateTime date, List<Seat> seats) {
         this.id = id;
         this.date = date;
-        this.seat = seat;
+        this.seats = seats;
     }
 
     public long getId() {
@@ -48,11 +53,19 @@ public class Reservation {
         this.date = date;
     }
 
-    public Seat getSeat() {
-        return seat;
+    public List<Seat> getSeats() {
+        return seats;
     }
 
-    public void setSeat(Seat seat) {
-        this.seat = seat;
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
     }
+
+    public BookingDTO convertToDTO() {
+        List<SeatDTO> seatDTOs = new ArrayList<>();
+        for (Seat s : seats) {
+            seatDTOs.add(s.convertToDTO());
+        }
+		return new BookingDTO(id, date, seatDTOs);
+	}
 }

@@ -28,12 +28,16 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import proj.concert.common.dto.ConcertDTO;
+import proj.concert.common.dto.PerformerDTO;
 import proj.concert.common.jackson.LocalDateTimeDeserializer;
 import proj.concert.common.jackson.LocalDateTimeSerializer;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -51,25 +55,34 @@ public class Concert implements Comparable<Concert> {
     @Column(name = "TITLE")
     @JsonProperty("title")
     private String title;
+    
+    @Column(name = "IMAGENAME")
+    @JsonProperty("imageName")
+    private String imageName;
+
+    @Column(name = "BLURB")
+    @JsonProperty("blurb")
+    private String blrb;
 
     @Column(name = "DATE")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime date;
+    private List<LocalDateTime> dates;
     
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "PERFORMER_ID")
     @JsonProperty("performer")
-    private Performer performer;
+    private List<Performer> performers;
 
-    public Concert(Long id, String title, LocalDateTime date, Performer performer) {
+    public Concert(Long id, String title, String imageName, String blurb) {
         this.id = id;
         this.title = title;
-        this.date = date;
-        this.performer = performer;
+        this.imageName = imageName;
+        this.blrb = blurb;
     }
 
-    public Concert(String title, LocalDateTime date, Performer performer) {
-        this(null, title, date, performer);
+    public Concert(String title, String imageName) {
+        this.title = title;
+        this.imageName = imageName;
     }
 
     public Concert() {
@@ -90,34 +103,42 @@ public class Concert implements Comparable<Concert> {
     public void setTitle(String title) {
         this.title = title;
     }
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    public LocalDateTime getDate() {
-        return date;
+
+    public String getImageName() {
+        return imageName;
     }
 
-    public Set<LocalDateTime> getDates() {
-        return null;
-    }
-    
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
-    @JsonIgnore
-    public void setPerformer(Performer performer) {
-        this.performer = performer;
+    public String getBlurb() {
+        return blrb;
     }
 
-    public Performer getPerformer() {
-        return performer;
+    public void setBlurb(String blrb) {
+        this.blrb = blrb;
     }
 
-    // getImageName()
-    // getPerformers()
-    // getDates()
-    // 
-    // 
+    public List<LocalDateTime> getDates() {
+        return dates;
+    }
+
+    public void setDates(List<LocalDateTime> dates) {
+        this.dates = dates;
+    }
+
+    public List<Performer> getPerformers() {
+        return performers;
+    }
+
+    public void setPerformers(List<Performer> performers) {
+        this.performers = performers;
+    }
+
+    public ConcertDTO convertToDTO() {
+		return new ConcertDTO(id, title, imageName, blrb);
+	}
 
     @Override
     public String toString() {
@@ -126,10 +147,14 @@ public class Concert implements Comparable<Concert> {
         buffer.append(id);
         buffer.append(", title: ");
         buffer.append(title);
+        buffer.append(", imageName: ");
+        buffer.append(imageName);
+        buffer.append(", blurb: ");
+        buffer.append(blrb);
         buffer.append(", date: ");
-        buffer.append(date.toString());
+        buffer.append(dates.toString());
         buffer.append(", featuring: ");
-        buffer.append(performer.getName());
+        buffer.append(performers);
 
         return buffer.toString();
     }

@@ -4,6 +4,8 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import proj.concert.common.dto.UserDTO;
+
 @Entity
 @Table(name = "USER")
 public class User {
@@ -39,4 +41,9 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserDTO convertToDTO() {
+		return new UserDTO(username, password);
+	}
+    
 }

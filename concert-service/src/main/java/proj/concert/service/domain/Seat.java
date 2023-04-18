@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.*;
 
+import proj.concert.common.dto.SeatDTO;
+
 @Entity
 @Table(name = "SEAT")
 public class Seat{
@@ -70,5 +72,9 @@ public class Seat{
     public void setCost(BigDecimal cost) {
         this.cost = cost;
     }
+
+	public SeatDTO convertToDTO() {
+		return new SeatDTO(label, cost);
+	}
 
 }
