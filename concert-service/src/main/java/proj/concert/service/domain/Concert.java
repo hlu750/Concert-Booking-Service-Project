@@ -34,10 +34,8 @@ import proj.concert.common.jackson.LocalDateTimeDeserializer;
 import proj.concert.common.jackson.LocalDateTimeSerializer;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -46,9 +44,10 @@ import javax.persistence.*;
 @Entity
 @Table(name = "CONCERT")
 public class Concert implements Comparable<Concert> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "CID")
     @JsonProperty("id")
     private Long id;
 
@@ -64,14 +63,24 @@ public class Concert implements Comparable<Concert> {
     @JsonProperty("blurb")
     private String blrb;
 
-    @Column(name = "DATE")
+	// @ElementCollection
+	// @CollectionTable(name = "CONCERT_DATE", joinColumns = @JoinColumn(name = "RID"))\
+	@Column(name = "DATE")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private List<LocalDateTime> dates;
+    private Set<LocalDateTime> dates;
     
+    // @ManyToMany
+	// @JoinTable(name = "CONCERT_PERFORMER",
+	// 		joinColumns = @JoinColumn(name = "CID"),
+	// 		inverseJoinColumns = @JoinColumn(name = "PID"))
+    // @Column(name = "PERFORMER_ID")
+    // @JsonProperty("performer")
+    // private Set<Performer> performers;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "PERFORMER_ID")
     @JsonProperty("performer")
-    private List<Performer> performers;
+    private Set<Performer> performers;
 
     public Concert(Long id, String title, String imageName, String blurb) {
         this.id = id;
@@ -120,19 +129,19 @@ public class Concert implements Comparable<Concert> {
         this.blrb = blrb;
     }
 
-    public List<LocalDateTime> getDates() {
+    public Set<LocalDateTime> getDates() {
         return dates;
     }
 
-    public void setDates(List<LocalDateTime> dates) {
+    public void setDates(Set<LocalDateTime> dates) {
         this.dates = dates;
     }
 
-    public List<Performer> getPerformers() {
+    public Set<Performer> getPerformers() {
         return performers;
     }
 
-    public void setPerformers(List<Performer> performers) {
+    public void setPerformers(Set<Performer> performers) {
         this.performers = performers;
     }
 
@@ -140,43 +149,43 @@ public class Concert implements Comparable<Concert> {
 		return new ConcertDTO(id, title, imageName, blrb);
 	}
 
-    @Override
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("Concert, id: ");
-        buffer.append(id);
-        buffer.append(", title: ");
-        buffer.append(title);
-        buffer.append(", imageName: ");
-        buffer.append(imageName);
-        buffer.append(", blurb: ");
-        buffer.append(blrb);
-        buffer.append(", date: ");
-        buffer.append(dates.toString());
-        buffer.append(", featuring: ");
-        buffer.append(performers);
+    // @Override
+    // public String toString() {
+    //     StringBuffer buffer = new StringBuffer();
+    //     buffer.append("Concert, id: ");
+    //     buffer.append(id);
+    //     buffer.append(", title: ");
+    //     buffer.append(title);
+    //     buffer.append(", imageName: ");
+    //     buffer.append(imageName);
+    //     buffer.append(", blurb: ");
+    //     buffer.append(blrb);
+    //     buffer.append(", date: ");
+    //     buffer.append(dates.toString());
+    //     buffer.append(", featuring: ");
+    //     buffer.append(performers);
 
-        return buffer.toString();
-    }
+    //     return buffer.toString();
+    // }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Concert))
-            return false;
-        if (obj == this)
-            return true;
+    // @Override
+    // public boolean equals(Object obj) {
+    //     if (!(obj instanceof Concert))
+    //         return false;
+    //     if (obj == this)
+    //         return true;
 
-        Concert rhs = (Concert) obj;
-        return new EqualsBuilder().
-                append(title, rhs.title).
-                isEquals();
-    }
+    //     Concert rhs = (Concert) obj;
+    //     return new EqualsBuilder().
+    //             append(title, rhs.title).
+    //             isEquals();
+    // }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 31).
-                append(title).hashCode();
-    }
+    // @Override
+    // public int hashCode() {
+    //     return new HashCodeBuilder(17, 31).
+    //             append(title).hashCode();
+    // }
 
     @Override
     public int compareTo(Concert concert) {

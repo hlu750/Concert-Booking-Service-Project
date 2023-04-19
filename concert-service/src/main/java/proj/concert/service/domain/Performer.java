@@ -16,7 +16,7 @@ public class Performer {
   
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "PID")
     @JsonProperty("id")
     private Long id;
 
@@ -91,39 +91,39 @@ public class Performer {
 		return new PerformerDTO(id, name, imageName, genre, blurb);
 	}
 
-    @Override
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("Performer, id: ");
-        buffer.append(id);
-        buffer.append(", name: ");
-        buffer.append(name);
-        buffer.append(", s3 image: ");
-        buffer.append(imageName);
-        buffer.append(", blurb: ");
-        buffer.append(blurb);
-        buffer.append(", genre: ");
-        buffer.append(genre.toString());
+    // @Override
+    // public String toString() {
+    //     StringBuffer buffer = new StringBuffer();
+    //     buffer.append("Performer, id: ");
+    //     buffer.append(id);
+    //     buffer.append(", name: ");
+    //     buffer.append(name);
+    //     buffer.append(", s3 image: ");
+    //     buffer.append(imageName);
+    //     buffer.append(", blurb: ");
+    //     buffer.append(blurb);
+    //     buffer.append(", genre: ");
+    //     buffer.append(genre.toString());
 
-        return buffer.toString();
-    }
+    //     return buffer.toString();
+    // }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Performer))
-            return false;
-        if (obj == this)
-            return true;
+    // @Override
+    // public boolean equals(Object obj) {
+    //     if (!(obj instanceof Performer))
+    //         return false;
+    //     if (obj == this)
+    //         return true;
 
-        Performer rhs = (Performer) obj;
-        return new EqualsBuilder().
-                append(name, rhs.name).
-                isEquals();
-    }
+    //     Performer rhs = (Performer) obj;
+    //     return new EqualsBuilder().
+    //             append(name, rhs.name).
+    //             isEquals();
+    // }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 31).
-                append(name).hashCode();
-    }
+    // @Override
+    // public int hashCode() {
+    //     return new HashCodeBuilder(17, 31).
+    //             append(name).hashCode();
+    // }
 }

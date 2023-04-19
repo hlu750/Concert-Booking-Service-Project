@@ -14,7 +14,7 @@ import proj.concert.common.dto.SeatDTO;
 public class Seat{
 
     // TODO Implement this class.
-
+	@Id
     @Column(name = "LABEL")
     @JsonProperty("label")
     private String label;

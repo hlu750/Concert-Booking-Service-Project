@@ -16,7 +16,8 @@ import proj.concert.common.dto.SeatDTO;
 @Table(name = "RESERVATION")
 public class Reservation {
 
-    @Column(name = "ID")
+    @Id
+    @Column(name = "RID")
     @JsonProperty("id")
     private long id;
 
@@ -24,7 +25,8 @@ public class Reservation {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
 
-    @Column(name = "SEAT")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "SEAT_ID")
     @JsonProperty("seat")
     private List<Seat> seats;
 

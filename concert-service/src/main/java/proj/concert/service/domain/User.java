@@ -10,6 +10,7 @@ import proj.concert.common.dto.UserDTO;
 @Table(name = "USER")
 public class User {
     
+    @Id
     @Column(name = "USERNAME")
     @JsonProperty("username")
 	private String username;
