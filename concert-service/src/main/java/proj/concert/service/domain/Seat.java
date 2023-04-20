@@ -19,7 +19,6 @@ public class Seat{
     @JsonProperty("label")
     private String label;
 
-	@Enumerated(EnumType.STRING)
     @Column(name = "ISBOOKED")
     @JsonProperty("isBooked")
     private boolean isBooked;

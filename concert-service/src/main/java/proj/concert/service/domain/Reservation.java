@@ -25,10 +25,18 @@ public class Reservation {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "SEAT_ID")
+    // @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // @JoinColumn(name = "SEAT_ID")
+
+    // @Column(name = "SEAT")
+    // @JsonProperty("seat")
+    // private List<Seat> seats;
+
+    @ElementCollection
+    @CollectionTable(name = "RESERVATION_SEATS", joinColumns =@JoinColumn(name = "RID"))
+	@Column(name = "seat")
     @JsonProperty("seat")
-    private List<Seat> seats;
+	private List<Seat> seats;
 
     public Reservation() {
     }

@@ -36,6 +36,7 @@ import proj.concert.common.jackson.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -65,9 +66,17 @@ public class Concert implements Comparable<Concert> {
 
 	// @ElementCollection
 	// @CollectionTable(name = "CONCERT_DATE", joinColumns = @JoinColumn(name = "RID"))\
-	@Column(name = "DATE")
+
+	// @Column(name = "DATE")
+    // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    // private Set<LocalDateTime> dates;
+
+    @ElementCollection
+    @CollectionTable(name = "CONCERT_DATES", joinColumns =@JoinColumn(name = "CID"))
+	@Column(name = "date")
+    // @JsonProperty("date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Set<LocalDateTime> dates;
+	private Set<LocalDateTime> dates;
     
     // @ManyToMany
 	// @JoinTable(name = "CONCERT_PERFORMER",
@@ -77,10 +86,18 @@ public class Concert implements Comparable<Concert> {
     // @JsonProperty("performer")
     // private Set<Performer> performers;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "PERFORMER_ID")
+    // @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // @JoinColumn(name = "PERFORMER_ID")
+
+    // @Column(name = "PERFORMER")
+    // @JsonProperty("performer")
+    // private Set<Performer> performers;
+
+    @ElementCollection
+    @CollectionTable(name = "CONCERT_PERFORMERS", joinColumns =@JoinColumn(name = "CID"))
+	@Column(name = "performer")
     @JsonProperty("performer")
-    private Set<Performer> performers;
+	private List<Performer> performers;
 
     public Concert(Long id, String title, String imageName, String blurb) {
         this.id = id;
@@ -137,11 +154,11 @@ public class Concert implements Comparable<Concert> {
         this.dates = dates;
     }
 
-    public Set<Performer> getPerformers() {
+    public List<Performer> getPerformers() {
         return performers;
     }
 
-    public void setPerformers(Set<Performer> performers) {
+    public void setPerformers(List<Performer> performers) {
         this.performers = performers;
     }
 
