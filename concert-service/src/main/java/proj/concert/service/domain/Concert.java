@@ -44,11 +44,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "CONCERT")
-public class Concert implements Comparable<Concert> {
+public class Concert{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CID")
+    @Column(name = "CONCERT_ID", unique = true)
     @JsonProperty("id")
     private Long id;
 
@@ -72,7 +72,7 @@ public class Concert implements Comparable<Concert> {
     // private Set<LocalDateTime> dates;
 
     @ElementCollection
-    @CollectionTable(name = "CONCERT_DATES", joinColumns =@JoinColumn(name = "CID"))
+    @CollectionTable(name = "CONCERT_DATE", joinColumns =@JoinColumn(name = "CONCERT_ID"))
 	@Column(name = "date")
     // @JsonProperty("date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -93,11 +93,23 @@ public class Concert implements Comparable<Concert> {
     // @JsonProperty("performer")
     // private Set<Performer> performers;
 
-    @ElementCollection
-    @CollectionTable(name = "CONCERT_PERFORMERS", joinColumns =@JoinColumn(name = "CID"))
-	@Column(name = "performer")
+    // @ElementCollection
+    // @CollectionTable(name = "CONCERT_PERFORMER", joinColumns =@JoinColumn(name = "CONCERT_ID"))
+    // @OneToMany
+	// @JoinTable(name = "CONCERT_PERFORMER",
+	// 		joinColumns = @JoinColumn(name = "CONCERT_ID"),
+	// 		inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID"))
+	// @Column(name = "performer")
+    // @JsonProperty("performer")
+	// private List<Performer> performers;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    // @JoinColumn(name="PERFORMER_ID")
+    @JoinTable(name = "CONCERT_PERFORMER",
+            joinColumns = @JoinColumn(name = "CONCERT_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID"))
     @JsonProperty("performer")
-	private List<Performer> performers;
+    private List<Performer> performers;
 
     public Concert(Long id, String title, String imageName, String blurb) {
         this.id = id;
@@ -204,8 +216,8 @@ public class Concert implements Comparable<Concert> {
     //             append(title).hashCode();
     // }
 
-    @Override
-    public int compareTo(Concert concert) {
-        return title.compareTo(concert.getTitle());
-    }
+    // @Override
+    // public int compareTo(Concert concert) {
+    //     return title.compareTo(concert.getTitle());
+    // }
 }

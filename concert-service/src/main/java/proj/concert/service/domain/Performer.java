@@ -8,6 +8,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.fasterxml.jackson.annotation.*;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.*; 
 
 @Entity
@@ -16,7 +19,7 @@ public class Performer {
   
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PID")
+    @Column(name = "PERFORMER_ID", unique = true)
     @JsonProperty("id")
     private Long id;
 
@@ -36,6 +39,12 @@ public class Performer {
     @Column(name = "BLURB")
     @JsonProperty("blurb")
     private String blurb;
+
+    // @ManyToOne
+    // @JoinTable(name = "CONCERT_PERFORMER", 
+    //         joinColumns = @JoinColumn(name = "CONCERT_ID"),
+    //         inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID"))
+    // private Set<Concert> concerts;
 
     public Performer() { }
 

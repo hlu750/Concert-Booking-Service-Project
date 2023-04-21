@@ -11,7 +11,7 @@ import proj.concert.common.dto.UserDTO;
 public class User {
     
     @Id
-    @Column(name = "USERNAME")
+    @Column(name = "USERNAME", unique = true)
     @JsonProperty("username")
 	private String username;
 

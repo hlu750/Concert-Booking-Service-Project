@@ -17,7 +17,7 @@ import proj.concert.common.dto.SeatDTO;
 public class Reservation {
 
     @Id
-    @Column(name = "RID")
+    @Column(name = "RESERVATION_ID", unique = true)
     @JsonProperty("id")
     private long id;
 
@@ -33,7 +33,7 @@ public class Reservation {
     // private List<Seat> seats;
 
     @ElementCollection
-    @CollectionTable(name = "RESERVATION_SEATS", joinColumns =@JoinColumn(name = "RID"))
+    @CollectionTable(name = "RESERVATION_SEAT", joinColumns =@JoinColumn(name = "RESERVATION_ID"))
 	@Column(name = "seat")
     @JsonProperty("seat")
 	private List<Seat> seats;

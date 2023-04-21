@@ -15,7 +15,7 @@ public class Seat{
 
     // TODO Implement this class.
 	@Id
-    @Column(name = "LABEL")
+    @Column(name = "LABEL", unique = true)
     @JsonProperty("label")
     private String label;
 
