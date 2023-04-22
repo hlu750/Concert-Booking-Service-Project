@@ -18,6 +18,9 @@ import proj.concert.common.jackson.LocalDateTimeSerializer;
 public class BookingDTO {
 
     private long concertId;
+    
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
     private List<SeatDTO> seats = new ArrayList<>();
 
@@ -38,8 +41,6 @@ public class BookingDTO {
         this.concertId = concertId;
     }
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     public LocalDateTime getDate() {
         return date;
     }

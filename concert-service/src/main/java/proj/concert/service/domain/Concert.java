@@ -2,6 +2,7 @@ package proj.concert.service.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import proj.concert.common.dto.ConcertDTO;
@@ -17,11 +18,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "CONCERTS")
-public class Concert{
+public class Concert{ 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CONCERT_ID", nullable = false , unique = true)
+    @Column(name = "ID", nullable = false , unique = true)
     private Long id;
 
     @Column(name = "TITLE")
@@ -34,29 +35,30 @@ public class Concert{
     private String blurb;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CONCERT_DATES",joinColumns = @JoinColumn(name = "CONCERT_ID"))
+    @CollectionTable(name = "CONCERT_DATES", joinColumns = @JoinColumn(name = "CONCERT_ID"))
 	@Column(name = "DATE")
-	private Set<LocalDateTime> dates;
+	private Set<LocalDateTime> dates = new HashSet<>();
     
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @org.hibernate.annotations.Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "CONCERT_PERFORMER",
 			joinColumns = @JoinColumn(name = "CONCERT_ID"),
 			inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID"))
     @Column(name = "PERFORMER_ID")
-    private Set<Performer> performers;
+    private Set<Performer> performers = new HashSet<>();
 
-    public Concert(Long id, String title, String imageName, String blurb) {
-        this.id = id;
-        this.title = title;
-        this.imageName = imageName;
-        this.blurb = blurb;
-    }
+    // public Concert(Long id, String title, String imageName, String blurb, List<Performer> performer) {
+    //     this.id = id;
+    //     this.title = title;
+    //     this.imageName = imageName;
+    //     this.blurb = blurb;
+    //     this.performers = performers;
+    // }
 
-    public Concert(String title, String imageName) {
-        this.title = title;
-        this.imageName = imageName;
-    }
+    // public Concert(String title, String imageName) {
+    //     this.title = title;
+    //     this.imageName = imageName;
+    // }
 
     public Concert() {
     }

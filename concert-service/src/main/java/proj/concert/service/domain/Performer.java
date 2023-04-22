@@ -15,11 +15,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "PERFORMERS")
-public class Performer {
+public class Performer { 
   
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PERFORMER_ID", unique = true)
+    @Column(name = "ID")
     private Long id;
 
     @Column(name = "NAME")
@@ -34,6 +34,9 @@ public class Performer {
 
     @Column(name = "BLURB", length = 1024)
     private String blurb;
+
+    // @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    // private Set<Concert> concerts;
 
     public Performer() { }
 
@@ -85,9 +88,17 @@ public class Performer {
         this.blurb = blurb;
     }
 
-    public PerformerDTO convertToDTO() {
-		return new PerformerDTO(id, name, imageName, genre, blurb);
-	}
+    // public PerformerDTO convertToDTO() {
+	// 	return new PerformerDTO(id, name, imageName, genre, blurb);
+	// }
+
+    // public Set<Concert> getConcerts() {
+    //     return concerts;
+    // }
+
+    // public void setConcerts(Set<Concert> concerts) {
+        // this.concerts = concerts;
+    // }
 
     @Override
     public boolean equals(Object obj) {
@@ -98,13 +109,13 @@ public class Performer {
 
         Performer rhs = (Performer) obj;
         return new EqualsBuilder().
-                append(name, rhs.name).
+                append(name, rhs.name).append(imageName,rhs.imageName).append(blurb,rhs.blurb).
                 isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 31).
-                append(name).hashCode();
+                append(name).append(imageName).append(blurb).hashCode();
     }
 }

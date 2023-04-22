@@ -21,6 +21,8 @@ import proj.concert.common.jackson.LocalDateTimeSerializer;
 public class ConcertInfoSubscriptionDTO {
 
     private long concertId;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
     private int percentageBooked;
 
@@ -41,8 +43,6 @@ public class ConcertInfoSubscriptionDTO {
         this.concertId = concertId;
     }
 
-    @JsonSerialize(contentUsing = LocalDateTimeSerializer.class)
-    @JsonDeserialize(contentUsing = LocalDateTimeDeserializer.class)
     public LocalDateTime getDate() {
         return date;
     }
