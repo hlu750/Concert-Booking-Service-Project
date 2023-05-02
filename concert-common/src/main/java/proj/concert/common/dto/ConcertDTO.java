@@ -1,19 +1,18 @@
 package proj.concert.common.dto;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import proj.concert.common.jackson.LocalDateTimeDeserializer;
 import proj.concert.common.jackson.LocalDateTimeSerializer;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DTO class to represent concerts.
  * <p>
- * A ConcertDTO describes a concert in terms of
+ * A ConcertDTO describes a concert in terms of:
  * id           the unique identifier for a concert.
  * title        the concert's title.
  * dates        the concert's scheduled dates and times (represented as a Set of LocalDateTime instances).
@@ -26,9 +25,7 @@ public class ConcertDTO {
     private Long id;
     private String title;
     private String imageName;
-    private String blrb;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private String blurb;
     private List<LocalDateTime> dates = new ArrayList<>();
     private List<PerformerDTO> performers = new ArrayList<>();
 
@@ -39,7 +36,7 @@ public class ConcertDTO {
         this.id = id;
         this.title = title;
         this.imageName = imageName;
-        this.blrb = blurb;
+        this.blurb = blurb;
     }
 
     public ConcertDTO(String title, String imageName) {
@@ -72,13 +69,15 @@ public class ConcertDTO {
     }
 
     public String getBlurb() {
-        return blrb;
+        return blurb;
     }
 
-    public void setBlurb(String blrb) {
-        this.blrb = blrb;
+    public void setBlurb(String blurb) {
+        this.blurb = blurb;
     }
 
+    @JsonSerialize(contentUsing= LocalDateTimeSerializer.class)
+    @JsonDeserialize(contentUsing= LocalDateTimeDeserializer.class)
     public List<LocalDateTime> getDates() {
         return dates;
     }

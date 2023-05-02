@@ -29,16 +29,16 @@ public class User {
     @Column(name = "PASSWORD")
     private String password; 
 
-    // @Column(name = "VERSION")
+    @Column(name = "VERSION")
     @Version
     private Long version;
     
     @Column(name = "COOKIE")
     private String cookie;
 
-    @OneToMany(cascade ={CascadeType.PERSIST,CascadeType.REMOVE}, mappedBy = "user")
-    @Fetch(FetchMode.SUBSELECT)
-    private Set<Booking> bookings = new HashSet<>();
+    // @OneToMany(cascade ={CascadeType.PERSIST,CascadeType.REMOVE}, mappedBy = "user")
+    // @Fetch(FetchMode.SUBSELECT)
+    // private Set<Booking> bookings = new HashSet<>();
 
     // @Column(name = "COOKIE")
     // private String cookie;
@@ -91,9 +91,9 @@ public class User {
         this.cookie = cookie;
     }
 
-    // public UserDTO convertToDTO() {
-	// 	return new UserDTO(username, password);
-	// }
+    public UserDTO convertToDTO() {
+		return new UserDTO(username, password);
+	}
     
     @Override
     public boolean equals(Object obj) {

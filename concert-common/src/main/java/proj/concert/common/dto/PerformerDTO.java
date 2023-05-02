@@ -2,7 +2,6 @@ package proj.concert.common.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import proj.concert.common.types.Genre;
 
 /**
@@ -75,18 +74,18 @@ public class PerformerDTO implements Comparable<PerformerDTO> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        PerformerDTO other = (PerformerDTO) obj;
+        PerformerDTO that = (PerformerDTO) o;
 
         return new EqualsBuilder()
-                .append(id, other.id)
-                .append(name, other.name)
-                .append(imageName, other.imageName)
-                .append(genre, other.genre)
+                .append(id, that.id)
+                .append(name, that.name)
+                .append(imageName, that.imageName)
+                .append(genre, that.genre)
                 .isEquals();
     }
 
