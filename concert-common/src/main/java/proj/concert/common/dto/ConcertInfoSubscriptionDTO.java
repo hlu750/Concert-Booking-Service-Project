@@ -1,13 +1,14 @@
 package proj.concert.common.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import proj.concert.common.jackson.LocalDateTimeDeserializer;
-import proj.concert.common.jackson.LocalDateTimeSerializer;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import proj.concert.common.jackson.LocalDateTimeDeserializer;
+import proj.concert.common.jackson.LocalDateTimeSerializer;
 
 /**
  * Represents a subscription request to be notified when a particular concert / date's booking ratio goes over
@@ -20,6 +21,8 @@ import java.time.LocalDateTime;
 public class ConcertInfoSubscriptionDTO {
 
     private long concertId;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
     private int percentageBooked;
 
@@ -40,8 +43,6 @@ public class ConcertInfoSubscriptionDTO {
         this.concertId = concertId;
     }
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     public LocalDateTime getDate() {
         return date;
     }

@@ -34,38 +34,34 @@ public class Concert{
     @Column(name = "BLURB", length=1024)
     private String blurb;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    // @CollectionTable(name = "CONCERT_DATES", joinColumns = @JoinColumn(name = "CONCERT_ID"))
-    @CollectionTable(name = "CONCERT_DATES")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "CONCERT_DATES", joinColumns = @JoinColumn(name = "CONCERT_ID"))
 	@Column(name = "DATE")
 	private Set<LocalDateTime> dates = new HashSet<>();
     
-    // @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
 	@JoinTable(name = "CONCERT_PERFORMER",
-			joinColumns = @JoinColumn(name = "CONCERT_ID", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID", referencedColumnName = "id"))
+			joinColumns = @JoinColumn(name = "CONCERT_ID"),
+			inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID"))
     @Column(name = "PERFORMER_ID")
-    private List<Performer> performers;
-    public Concert() {
-    }
-    // private Set<Performer> performers = new HashSet<>();
+    private Set<Performer> performers = new HashSet<>();
 
-    public Concert(Long id, String title, String imageName, String blurb, List<Performer> performer) {
-        this.id = id;
-        this.title = title;
-        this.imageName = imageName;
-        this.blurb = blurb;
-        this.performers = performers;
-    }
+    // public Concert(Long id, String title, String imageName, String blurb, List<Performer> performer) {
+    //     this.id = id;
+    //     this.title = title;
+    //     this.imageName = imageName;
+    //     this.blurb = blurb;
+    //     this.performers = performers;
+    // }
 
     // public Concert(String title, String imageName) {
     //     this.title = title;
     //     this.imageName = imageName;
     // }
 
-  
+    public Concert() {
+    }
 
     public Long getId() {
         return id;
@@ -107,11 +103,11 @@ public class Concert{
         this.dates = dates;
     }
 
-    public List<Performer> getPerformers() {
+    public Set<Performer> getPerformers() {
         return performers;
     }
 
-    public void setPerformers(List<Performer> performers) {
+    public void setPerformers(Set<Performer> performers) {
         this.performers = performers;
     }
 
@@ -121,14 +117,11 @@ public class Concert{
 
     @Override
     public boolean equals(Object obj) {
-        // if (!(obj instanceof Concert))
-        //     return false;
-        // if (obj == this)
-        //     return true;
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) {
+        if (!(obj instanceof Concert))
             return false;
-        }
+        if (obj == this)
+            return true;
+
         Concert rhs = (Concert) obj;
         return new EqualsBuilder().
                 append(title, rhs.title).

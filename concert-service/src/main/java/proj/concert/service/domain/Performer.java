@@ -35,8 +35,8 @@ public class Performer {
     @Column(name = "BLURB", length = 1024)
     private String blurb;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private Set<Concert> concerts;
+    // @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    // private Set<Concert> concerts;
 
     public Performer() { }
 
