@@ -22,9 +22,9 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private LocalDateTime date;
-    private long concertId;
+    private Long concertId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -42,14 +42,14 @@ public class Booking {
     //     this.date=date;
     // }
     
-    public Booking(long concertId, LocalDateTime date, List<Seat> seats, User user) {
+    public Booking(Long concertId, LocalDateTime date, List<Seat> seats, User user) {
         this.concertId = concertId;
         this.date = date;
         this.seats = seats;
         this.user = user;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -65,11 +65,11 @@ public class Booking {
         this.date = date;
     }
 
-    public long getConcertId() {
+    public Long getConcertId() {
         return concertId;
     }
 
-    public void setConcertId(long concertId) {
+    public void setConcertId(Long concertId) {
         this.concertId = concertId;
     }
 

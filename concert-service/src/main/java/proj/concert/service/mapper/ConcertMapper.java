@@ -14,7 +14,7 @@ public class ConcertMapper {
     public static ConcertDTO toDTO(Concert concert){
         ConcertDTO result = new ConcertDTO(concert.getId(),concert.getTitle(),concert.getImageName(),concert.getBlurb());
         result.setDates(new ArrayList<>(concert.getDates()));
-        result.setPerformers(PerformerMapper.setToDTO(concert.getPerformers()));
+        result.setPerformers(PerformerMapper.listToDTO(concert.getPerformers()));
         return result;
     }
 
