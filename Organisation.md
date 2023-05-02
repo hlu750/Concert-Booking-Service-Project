@@ -16,7 +16,7 @@ To minimise the chance of concurrency errors in the programs execution, we used 
 Short description of how the domain model is organised (2-3 sentences)
 
 ***
-
+We used Lazy loading for the Booking.java and Performer.java files, while Eager loading was used for Concert.Java.
 ***
 
 Points to consider
