@@ -148,6 +148,68 @@ public class ConcertResource {
         }
     }
 
+ 
+    // Make a booking using pessimistic locking
+    @POST
+    @Path("/bookings")
+    public Response makeABooking(BookingRequestDTO dto, @CookieParam("auth") Cookie cookie){
+        LOGGER.info("Making a booking.");
+        EntityManager em = PersistenceManager.instance().createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            User user = em.createQuery("select user from User user where user.cookie = :cookie", User.class)
+                    .setParameter("cookie", cookie.getValue())
+                    .getSingleResult();
+
+            em.getTransaction().commit();
+
+            if (user == null) {
+                LOGGER.debug("No user with cookie: " + cookie.getValue() + " exists");
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+
+            em.getTransaction().begin();
+
+            Concert concert = em.find(Concert.class, dto.getConcertId(), LockModeType.PESSIMISTIC_WRITE);
+
+            em.getTransaction().commit();
+
+            if (concert == null) {
+                LOGGER.debug("No concert with id: " + dto.getConcertId() + " exists");
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            em.getTransaction().begin();
+
+            List<Seat> seats = em.createQuery("select seat from Seat seat where seat.date = :date and seat.label in :labels", Seat.class)
+                    .setParameter("date", dto.getDate())
+                    .setParameter("labels", dto.getSeatLabels())
+                    .getResultList();
+
+            em.getTransaction().commit();
+
+            if (seats.size() != dto.getSeatLabels().size()) {
+                LOGGER.debug("Not all seats are available");
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            em.getTransaction().begin();
+
+            Booking newBooking = new Booking(dto.getConcertId(), dto.getDate(), seats, user);
+            em.persist(newBooking);
+
+
+            em.persist(newBooking);
+
+            em.getTransaction().commit();
+
+            return Response.ok(BookingMapper.toDTO(newBooking)).build();
+        } finally {
+            em.close();
+        }
+    }
 
     @POST
     @Path("/login")
@@ -181,71 +243,6 @@ public class ConcertResource {
         }
     }
 
-    @POST
-    @Path("/bookings")
-    public Response makeABooking(BookingRequestDTO dto, @CookieParam("auth") Cookie cookie) {
-        LOGGER.info("Try to make a booing of concert " + dto.getConcertId()
-                + "on Date " + dto.getDate());
-
-        if (cookie == null) { //Haven't login
-            LOGGER.debug("Didn't provide the cookie");
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-        EntityManager em = PersistenceManager.instance().createEntityManager();
-
-        try {
-            em.getTransaction().begin();
-            User user = this.getAuthenticatedUser(em, cookie);
-
-            if (user == null) { //Haven't sign up
-                return Response.status(Response.Status.UNAUTHORIZED).build();
-            }
-
-            Concert concert = em.find(Concert.class, dto.getConcertId());
-
-            //Invalid the concert and valid concert with invalid dates
-            if (concert == null || !concert.getDates().contains(dto.getDate())) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
-
-            //Get all the requested seats and set the lock to prevent the concurrent booking
-            List<Seat> seats = em.createQuery("select s from Seat s where s.date = :date and s.isBooked = false and s.label in :seats", Seat.class)
-                    .setLockMode(LockModeType.OPTIMISTIC)
-                    .setParameter("seats", dto.getSeatLabels())
-                    .setParameter("date", dto.getDate())
-                    .getResultList();
-
-            //At least one seat is already booked
-            if (seats.size() != dto.getSeatLabels().size()) {
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-
-            for (Seat seat : seats) { //Book all seats
-                seat.setBooked(true);
-            }
-
-            //Get all the booked seats
-            List<Seat> bookedSeatsList = em.createQuery("select s from Seat s where s.date = :date and s.isBooked = true ", Seat.class)
-                    .setParameter("date", dto.getDate())
-                    .getResultList();
-
-            //Get the number of booked seats
-            int numOfBookedSeats = bookedSeatsList.size();
-
-            //Set the booking
-            Booking newBooking = new Booking(dto.getConcertId(), dto.getDate(), seats, user);
-            em.persist(newBooking);
-
-            em.getTransaction().commit();
-
-            // this.notifyInfoToUser(dto, numOfBookedSeats);
-            return Response.created(URI.create("concert-service/bookings/" + newBooking.getId()))
-                    .cookie(new NewCookie("auth", cookie.getValue())).build();
-        } finally {
-            em.close();
-        }
-    }
 
     @GET
     @Path("/bookings/{id}")
@@ -291,18 +288,9 @@ public class ConcertResource {
     @GET
     @Path("/bookings")
     public Response getAllBookingsForUser(@CookieParam("auth") Cookie cookie) {
-        LOGGER.info("Get all the bookings for auth user");
-
-        if (cookie == null) { //User hasn't login yet
-            LOGGER.debug("Didn't provide the cookie");
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
         EntityManager em = PersistenceManager.instance().createEntityManager();
-
-        try {
+        try{
             em.getTransaction().begin();
-
             User user = this.getAuthenticatedUser(em, cookie);
 
             if (user == null) { //Haven't sign up
@@ -313,7 +301,7 @@ public class ConcertResource {
                     .setParameter("user", user)
                     .getResultList();
 
-            GenericEntity<List<BookingDTO>> entity = new GenericEntity<>(BookingMapper.listToDTO(bookings)){};
+            GenericEntity<List<BookingDTO>> entity = new GenericEntity<>(BookingMapper.listToDTO(bookings)){}; //Convert to DTO
 
             em.getTransaction().commit();
 
