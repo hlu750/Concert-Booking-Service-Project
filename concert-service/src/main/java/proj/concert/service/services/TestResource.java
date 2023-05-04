@@ -1,10 +1,10 @@
 package proj.concert.service.services;
 
+import proj.concert.service.util.ConcertUtils;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-
-import proj.concert.service.util.ConcertUtils;
 
 /**
  * This service allows the integration tests to reset the database via an HTTP request. Do not modify this class.

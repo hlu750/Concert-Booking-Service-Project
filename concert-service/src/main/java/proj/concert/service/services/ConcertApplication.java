@@ -9,25 +9,26 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is the Application class for the concert service. This class is complete -- you should not need to modify it
- * (but marks will not be deducted if you decide you need to do so).
+ * This is the Application class for the concert service. This class is complete - you should not need to modify it
+ * (but will not be deducted marks if you decide you need to do so).
  */
 @ApplicationPath("/services")
 public class ConcertApplication extends Application {
 
-    private Set<Object> singleton = new HashSet<>();
+    private Set<Object> singletons = new HashSet<>();
     private Set<Class<?>> classes = new HashSet<>();
 
     public ConcertApplication() {
         classes.add(TestResource.class);
         classes.add(ConcertResource.class);
-        singleton.add(PersistenceManager.instance());
+        singletons.add(PersistenceManager.instance());
+
         ConcertUtils.initConcerts();
     }
 
     @Override
     public Set<Object> getSingletons() {
-        return singleton;
+        return singletons;
     }
 
     @Override

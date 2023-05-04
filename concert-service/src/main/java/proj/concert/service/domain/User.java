@@ -1,55 +1,36 @@
 package proj.concert.service.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import com.fasterxml.jackson.annotation.*;
-
-import proj.concert.common.dto.UserDTO;
-
+/**
+ * Domain class represent the user of theater.
+ */
 @Entity
 @Table(name = "USERS")
 public class User {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
     private Long id;
-    
+
     @Column(name = "USERNAME")
     private String username;
 
     @Column(name = "PASSWORD")
-    private String password; 
+    private String password;
+
 
     @Column(name = "VERSION")
     @Version
     private Long version;
-    
+
     @Column(name = "COOKIE")
     private String cookie;
 
-    // @OneToMany(cascade ={CascadeType.PERSIST,CascadeType.REMOVE}, mappedBy = "user")
-    // @Fetch(FetchMode.SUBSELECT)
-    // private Set<Booking> bookings = new HashSet<>();
-
-    // @Column(name = "COOKIE")
-    // private String cookie;
-
-    // public User(String username, String password) {
-	// 	this.username = username;
-	// 	this.password = password;
-	// }
-
-    public User() {
-	}
+    public User(){
+    }
 
     public Long getId() {
         return id;
@@ -59,12 +40,12 @@ public class User {
         this.id = id;
     }
 
-	public String getUsername() {
-		return username;
+    public String getUsername() {
+        return username;
     }
 
-	public void setUsername(String username) {
-		this.username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -75,14 +56,6 @@ public class User {
         this.password = password;
     }
 
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
     public String getCookie() {
         return cookie;
     }
@@ -91,26 +64,19 @@ public class User {
         this.cookie = cookie;
     }
 
-    public UserDTO convertToDTO() {
-		return new UserDTO(username, password);
-	}
-    
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Performer))
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
-        if (obj == this)
-            return true;
+        }
 
-        User rhs = (User) obj;
-        return new EqualsBuilder().
-                append(username, rhs.username).append(password,rhs.password).
-                isEquals();
+        User user = (User) obj;
+        return new EqualsBuilder().append(username, user.username).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 31).
-                append(username).append(password).hashCode();
+        return new HashCodeBuilder(17, 31).append(username).hashCode();
     }
 }

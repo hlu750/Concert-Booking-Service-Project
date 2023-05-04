@@ -1,10 +1,11 @@
 package proj.concert.service.util;
-import proj.concert.common.dto.ConcertInfoSubscriptionDTO;
-import javax.ws.rs.container.AsyncResponse;
-public class Subscription {
-    
-    private ConcertInfoSubscriptionDTO dto;
 
+import proj.concert.common.dto.ConcertInfoSubscriptionDTO;
+
+import javax.ws.rs.container.AsyncResponse;
+
+public class Subscription {
+    private ConcertInfoSubscriptionDTO dto;
     private AsyncResponse response;
 
     public Subscription(ConcertInfoSubscriptionDTO dto, AsyncResponse response) {

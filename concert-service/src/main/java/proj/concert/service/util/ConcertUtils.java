@@ -2,7 +2,6 @@ package proj.concert.service.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import proj.concert.service.domain.Concert;
 import proj.concert.service.domain.Seat;
 import proj.concert.service.services.ConcertApplication;

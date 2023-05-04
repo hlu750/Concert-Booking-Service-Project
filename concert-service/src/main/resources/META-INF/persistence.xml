@@ -21,7 +21,7 @@
 	     
 	     www.h2database.com -->
 	     
-	<persistence-unit name="proj.concert">
+	<persistence-unit name="se325.assignment01.concert">
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 
 		<properties>

@@ -1,11 +1,11 @@
 package proj.concert.service.util;
 
+import proj.concert.service.domain.Seat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
-import proj.concert.service.domain.Seat;
 
 /**
  * Utility class that models the layout of seats at the concert venue.

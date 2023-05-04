@@ -239,7 +239,7 @@ public class ConcertResource {
 
             em.getTransaction().commit();
 
-            // this.notifyInfoToUser(dto, numOfBookedSeats);
+            this.notifyInfoToUser(dto, numOfBookedSeats);
             return Response.created(URI.create("concert-service/bookings/" + newBooking.getId()))
                     .cookie(new NewCookie("auth", cookie.getValue())).build();
         } finally {

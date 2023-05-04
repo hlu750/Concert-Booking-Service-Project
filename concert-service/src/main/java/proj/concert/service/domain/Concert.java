@@ -1,71 +1,58 @@
 package proj.concert.service.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import proj.concert.common.dto.ConcertDTO;
-
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 
+/**
+ * Domain class represents the concert.
+ */
 @Entity
 @Table(name = "CONCERTS")
-public class Concert{ 
+public class Concert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false , unique = true)
+    @Column(name="ID",nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "TITLE")
+    @Column(name="TITLE")
     private String title;
-    
-    @Column(name = "IMAGE_NAME")
+
+    @Column(name="IMAGE_NAME")
     private String imageName;
 
-    @Column(name = "BLURB", length=1024)
+    @Column(name="BLURB", length=1024)
     private String blurb;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    // @CollectionTable(name = "CONCERT_DATES", joinColumns = @JoinColumn(name = "CONCERT_ID"))
     @CollectionTable(name = "CONCERT_DATES")
-	@Column(name = "DATE")
-	private Set<LocalDateTime> dates = new HashSet<>();
-    
-    // @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @Fetch(FetchMode.SUBSELECT)
-	@JoinTable(name = "CONCERT_PERFORMER",
-			joinColumns = @JoinColumn(name = "CONCERT_ID", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID", referencedColumnName = "id"))
-    @Column(name = "PERFORMER_ID")
-    private List<Performer> performers;
-    public Concert() {
-    }
-    // private Set<Performer> performers = new HashSet<>();
+    @Column(name="DATE")
+    private Set<LocalDateTime> dates;
 
-    public Concert(Long id, String title, String imageName, String blurb, List<Performer> performer) {
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @org.hibernate.annotations.Fetch(
+            org.hibernate.annotations.FetchMode.SUBSELECT)
+    @JoinTable(name = "CONCERT_PERFORMER",
+            joinColumns = @JoinColumn(name="CONCERT_ID", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID", referencedColumnName = "id"))
+    @Column(name="PERFORMER")
+    private List<Performer> performers;
+
+    public Concert(){}
+
+    public Concert(Long id, String title, String imageName, String blurb, List<Performer> performers){
         this.id = id;
         this.title = title;
         this.imageName = imageName;
         this.blurb = blurb;
         this.performers = performers;
     }
-
-    // public Concert(String title, String imageName) {
-    //     this.title = title;
-    //     this.imageName = imageName;
-    // }
-
-  
 
     public Long getId() {
         return id;
@@ -115,29 +102,20 @@ public class Concert{
         this.performers = performers;
     }
 
-    public ConcertDTO convertToDTO() {
-		return new ConcertDTO(id, title, imageName, blurb);
-	}
-
     @Override
     public boolean equals(Object obj) {
-        // if (!(obj instanceof Concert))
-        //     return false;
-        // if (obj == this)
-        //     return true;
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-        Concert rhs = (Concert) obj;
-        return new EqualsBuilder().
-                append(title, rhs.title).
-                isEquals();
+
+        Concert concert = (Concert) obj;
+
+        return new EqualsBuilder().append(title, concert.title).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 31).
-                append(title).hashCode();
+        return new HashCodeBuilder(17, 31).append(title).hashCode();
     }
 }

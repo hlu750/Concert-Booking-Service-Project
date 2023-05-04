@@ -1,22 +1,18 @@
 package proj.concert.service.domain;
 
-import proj.concert.common.dto.PerformerDTO;
-import proj.concert.common.types.Genre;
+import java.util.Set;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import proj.concert.common.types.Genre;
 
-import com.fasterxml.jackson.annotation.*;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.*; 
-
+/**
+ * Domain class represents the performers.
+ */
 @Entity
 @Table(name = "PERFORMERS")
-public class Performer { 
-  
+public class Performer{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -29,17 +25,17 @@ public class Performer {
     private String imageName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "GENRE")
+    @Column(name="GENRE")
     private Genre genre;
 
-    @Column(name = "BLURB", length = 1024)
+    @Column(name="BLURB", length = 1024)
     private String blurb;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Concert> concerts;
 
-    public Performer() { }
-
+    public Performer() {
+    }
     public Performer(Long id, String name, String imageName, Genre genre, String blurb) {
         this.id = id;
         this.name = name;
@@ -47,7 +43,6 @@ public class Performer {
         this.genre = genre;
         this.blurb = blurb;
     }
-
     public Long getId() {
         return id;
     }
@@ -88,34 +83,29 @@ public class Performer {
         this.blurb = blurb;
     }
 
-    // public PerformerDTO convertToDTO() {
-	// 	return new PerformerDTO(id, name, imageName, genre, blurb);
-	// }
+    public Set<Concert> getConcerts() {
+        return concerts;
+    }
 
-    // public Set<Concert> getConcerts() {
-    //     return concerts;
-    // }
-
-    // public void setConcerts(Set<Concert> concerts) {
-        // this.concerts = concerts;
-    // }
+    public void setConcerts(Set<Concert> concerts) {
+        this.concerts = concerts;
+    }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Performer))
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
-        if (obj == this)
-            return true;
+        }
 
-        Performer rhs = (Performer) obj;
-        return new EqualsBuilder().
-                append(name, rhs.name).append(imageName,rhs.imageName).append(blurb,rhs.blurb).
-                isEquals();
+        Performer performer = (Performer) obj;
+
+        return new EqualsBuilder().append(name, performer.name).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 31).
-                append(name).append(imageName).append(blurb).hashCode();
+        return new HashCodeBuilder(17, 31).append(name).hashCode();
     }
 }
+
