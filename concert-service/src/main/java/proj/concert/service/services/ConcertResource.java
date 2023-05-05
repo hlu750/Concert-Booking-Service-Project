@@ -6,11 +6,7 @@ import proj.concert.common.dto.*;
 import proj.concert.common.types.BookingStatus;
 import proj.concert.service.domain.*;
 import proj.concert.service.jaxrs.LocalDateTimeParam;
-import proj.concert.service.mapper.BookingMapper;
-import proj.concert.service.mapper.ConcertMapper;
-import proj.concert.service.mapper.PerformerMapper;
-import proj.concert.service.mapper.SeatMapper;
-// import proj.concert.service.util.Subscription;
+import proj.concert.service.mapper.*;
 import proj.concert.service.util.TheatreLayout;
 
 import javax.persistence.EntityManager;
@@ -28,7 +24,7 @@ import java.util.*;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ConcertResource {
     private static Logger LOGGER = LoggerFactory.getLogger(ConcertResource.class);
-    // private static final Map<Long, List<Subscription>> subscribersMap = new HashMap<>();
+    private static final Map<Long, List<Subscription>> subscribersMap = new HashMap<>();
 
     @GET
     @Path("/concerts/{id}")
@@ -76,7 +72,7 @@ public class ConcertResource {
         }
 
     }
-
+    
     @GET
     @Path("/concerts/summaries")
     public Response getConcertSummaries() {
@@ -387,42 +383,42 @@ public class ConcertResource {
             em.getTransaction().commit();
 
             //Renew the subscribers map
-            // List<Subscription> subscribers = subscribersMap.getOrDefault(concert.getId(), new ArrayList<>());
-            // subscribers.add(new Subscription(dto, sub));
-            // subscribersMap.put(concert.getId(), subscribers);
+            List<Subscription> subscribers = subscribersMap.getOrDefault(concert.getId(), new ArrayList<>());
+            subscribers.add(new Subscription(dto, sub));
+            subscribersMap.put(concert.getId(), subscribers);
         } finally {
             em.close();
         }
     }
 
-    // public void notifyInfoToUser(BookingRequestDTO dto, int numOfBookedSeats) {
-    //     // List<Subscription> subs = subscribersMap.get(dto.getConcertId());
+    public void notifyInfoToUser(BookingRequestDTO dto, int numOfBookedSeats) {
+        List<Subscription> subs = subscribersMap.get(dto.getConcertId());
 
-    //     if(subs != null) { //Make sure the concert id id valid
-    //         List<Subscription> newSubs = new ArrayList<>();
-    //         int numOfAvaliableSeats = TheatreLayout.NUM_SEATS_IN_THEATRE - numOfBookedSeats;
+        if(subs != null) { //Make sure the concert id id valid
+            List<Subscription> newSubs = new ArrayList<>();
+            int numOfAvaliableSeats = TheatreLayout.NUM_SEATS_IN_THEATRE - numOfBookedSeats;
 
-    //         //Store all the matching subs into the new list
-    //         for(Subscription sub:subs) {
-    //             if( (sub.getDto().getDate().equals(dto.getDate()))
-    //                     && (this.calPercentage(numOfBookedSeats) > sub.getDto().getPercentageBooked())) {
-    //                 newSubs.add(sub);
-    //             }
-    //         }
+            //Store all the matching subs into the new list
+            for(Subscription sub:subs) {
+                if( (sub.getSubDto().getDate().equals(dto.getDate()))
+                        && (this.calPercentage(numOfBookedSeats) > sub.getSubDto().getPercentageBooked())) {
+                    newSubs.add(sub);
+                }
+            }
 
-    //         //Post the information to the user
-    //         synchronized (subs) {
-    //             for(Subscription sub:newSubs) {
-    //                 ConcertInfoNotificationDTO notification = new ConcertInfoNotificationDTO(numOfAvaliableSeats);
-    //                 sub.getResponse().resume(Response.ok(notification).build());
-    //                 subs.remove(sub);
-    //             }
-    //         }
+            //Post the information to the user
+            synchronized (subs) {
+                for(Subscription sub:newSubs) {
+                    ConcertInfoNotificationDTO notification = new ConcertInfoNotificationDTO(numOfAvaliableSeats);
+                    sub.getResponse().resume(Response.ok(notification).build());
+                    subs.remove(sub);
+                }
+            }
 
-    //         //Renew the map
-    //         subscribersMap.put(dto.getConcertId(), subs);
-    //     }
-    // }
+            //Renew the map
+            subscribersMap.put(dto.getConcertId(), subs);
+        }
+    }
 
     //=========== HELP METHODS =========
     public User getAuthenticatedUser(EntityManager em, Cookie cookie) {

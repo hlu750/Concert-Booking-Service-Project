@@ -11,11 +11,14 @@ import java.util.List;
  * Mapper class to convert from domain-model to DTO objects representing Concert.
  */
 public class ConcertMapper {
-    public static ConcertDTO toDTO(Concert concert){
-        ConcertDTO result = new ConcertDTO(concert.getId(),concert.getTitle(),concert.getImageName(),concert.getBlurb());
-        result.setDates(new ArrayList<>(concert.getDates()));
-        result.setPerformers(PerformerMapper.setToDTO(concert.getPerformers()));
-        return result;
+    public static ConcertDTO toDTO(Concert c) {
+        ConcertDTO dto = new ConcertDTO(c.getId(), c.getTitle(), c.getImageName(), c.getBlurb());
+        c.getPerformers()
+                .forEach(performer -> dto.getPerformers()
+                        .add(PerformerMapper.toDTO(performer)));
+        dto.getDates()
+                .addAll(c.getDates());
+        return dto;
     }
 
     public static List<ConcertDTO> listToDTO(List<Concert> concerts) {
@@ -28,11 +31,9 @@ public class ConcertMapper {
 
     public static List<ConcertSummaryDTO> listToConcertSummaryDTO(List<Concert> concerts) {
         List<ConcertSummaryDTO> concertSummaryDTOList = new ArrayList<>();
-
-        for(Concert c:concerts) {
-            concertSummaryDTOList.add( new ConcertSummaryDTO(c.getId(), c.getTitle(), c.getImageName()));
+        for (Concert c : concerts) {
+            concertSummaryDTOList.add(new ConcertSummaryDTO(c.getId(), c.getTitle(), c.getImageName()));
         }
-
         return concertSummaryDTOList;
     }
 }

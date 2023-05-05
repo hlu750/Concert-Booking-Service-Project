@@ -34,7 +34,7 @@ public class Concert{
     @Column(name = "BLURB", length=1024)
     private String blurb;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection //(fetch = FetchType.EAGER)
     @CollectionTable(name = "CONCERT_DATES", joinColumns = @JoinColumn(name = "CONCERT_ID"))
 	@Column(name = "DATE")
 	private Set<LocalDateTime> dates = new HashSet<>();
