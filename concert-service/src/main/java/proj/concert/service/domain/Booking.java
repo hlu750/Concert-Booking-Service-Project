@@ -1,6 +1,11 @@
 package proj.concert.service.domain;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+
+import org.hibernate.annotations.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,11 +22,10 @@ public class Booking {
     private LocalDateTime date;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @org.hibernate.annotations.Fetch(
-            org.hibernate.annotations.FetchMode.SUBSELECT)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Seat> seats;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     public Booking() {}

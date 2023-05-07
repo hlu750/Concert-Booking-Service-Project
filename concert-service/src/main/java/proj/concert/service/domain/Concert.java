@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 
 /**
@@ -30,14 +32,13 @@ public class Concert {
     @Column(name="BLURB", length=1024)
     private String blurb;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "CONCERT_DATES")
     @Column(name="DATE")
     private Set<LocalDateTime> dates;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @org.hibernate.annotations.Fetch(
-            org.hibernate.annotations.FetchMode.SUBSELECT)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "CONCERT_PERFORMER",
             joinColumns = @JoinColumn(name="CONCERT_ID", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "PERFORMER_ID", referencedColumnName = "id"))

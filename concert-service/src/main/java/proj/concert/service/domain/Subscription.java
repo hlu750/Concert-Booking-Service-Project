@@ -1,4 +1,4 @@
-package proj.concert.service.util;
+package proj.concert.service.domain;
 
 import proj.concert.common.dto.ConcertInfoSubscriptionDTO;
 

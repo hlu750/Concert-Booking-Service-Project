@@ -28,8 +28,13 @@ public class User {
 
     @Column(name = "COOKIE")
     private String cookie;
-
+    
     public User(){
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public Long getId() {
