@@ -92,11 +92,14 @@ public Response getAllConcerts() {
 
             em.getTransaction().commit();
 
-            List<ConcertSummaryDTO> dtos = ConcertMapper.listToConcertSummaryDTO(concerts);
-            GenericEntity<List<ConcertSummaryDTO>> entity =  new GenericEntity<>(dtos) {};
+            List<ConcertSummaryDTO> concertSummaryDTOList = new ArrayList<>();
+    
+            for(Concert c:concerts) {
+                concertSummaryDTOList.add( new ConcertSummaryDTO(c.getId(), c.getTitle(), c.getImageName()));
+            }
+            GenericEntity<List<ConcertSummaryDTO>> entity =  new GenericEntity<>(concertSummaryDTOList) {};
             return Response.ok(entity).build();
         } finally {
-
             em.close();
         }
     }

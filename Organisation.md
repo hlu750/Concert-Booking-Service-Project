@@ -25,7 +25,7 @@ For this project, the team was organised as follows:
 - All team members reviewed the domain model, RESTful web service, and documentation.
 
 Our team decided on what tasks we each wanted to start on at the start of the project (Rukun starting on Task 1, Jaeha starting on Task 2, Helen starting on documentation). Then over time we implemented the required tasks individually at first, but we eventually ended up focusing on different tasks and started helping out wherever help was needed as well as kept in contact with each other so that everyone had an idea of what stage the project was at. Helen Lu and Jae Ha started on Task 1 while Rukun Aaron started on Task 2. Rukun eventually fixed some changes and assisted on Task 1 while Helen Lu and Jae Ha helped Rukun Aaron on Task 2. Then Jae Ha worked on documenting the process with Helen's help while Rukun fixed some errors. 
-Note: Jae ha's initial commit logs are in the Task 2 branch which the team didn't merge into the final branch and Helen committed the Organisation file on behalf of Jae and Helen because he wasn't able to push.
+Note: Jae ha's initial commit logs are in the Task 2 branch which the team didn't merge into the final branch and Helen committed the Organisation file on behalf of Jae and Helen.
 
 ### Concurrency
 <!-- Short description of the strategy used to minimise the chance of concurrency errors in program execution (2-3 sentences) -->

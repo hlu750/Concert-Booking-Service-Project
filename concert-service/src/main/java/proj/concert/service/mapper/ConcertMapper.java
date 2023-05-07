@@ -25,15 +25,5 @@ public class ConcertMapper {
         }
         return dtoList;
     }
-
-    public static List<ConcertSummaryDTO> listToConcertSummaryDTO(List<Concert> concerts) {
-        List<ConcertSummaryDTO> concertSummaryDTOList = new ArrayList<>();
-
-        for(Concert c:concerts) {
-            concertSummaryDTOList.add( new ConcertSummaryDTO(c.getId(), c.getTitle(), c.getImageName()));
-        }
-
-        return concertSummaryDTOList;
-    }
 }
 

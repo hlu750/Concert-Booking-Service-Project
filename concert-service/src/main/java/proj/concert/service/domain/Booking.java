@@ -31,11 +31,7 @@ public class Booking {
     private User user;
 
     public Booking() {}
-    // public Booking(User user,long concertId,LocalDateTime date){
-        //     this.user = user;
-        //     this.concertId = concertId;
-        //     this.date=date;
-        // }
+    
     public Booking(Long concertId, LocalDateTime date, List<Seat> seats, User user) {
         this.date = date;
         this.concertId = concertId;
