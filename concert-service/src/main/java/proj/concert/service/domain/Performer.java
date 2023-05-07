@@ -91,21 +91,39 @@ public class Performer{
         this.concerts = concerts;
     }
 
+    // @Override
+    // public boolean equals(Object obj) {
+    //     if (obj == this) return true;
+    //     if (obj == null || obj.getClass() != this.getClass()) {
+    //         return false;
+    //     }
+
+    //     Performer performer = (Performer) obj;
+
+    //     return new EqualsBuilder().append(name, performer.name).isEquals();
+    // }
+
+    // @Override
+    // public int hashCode() {
+    //     return new HashCodeBuilder(17, 31).append(name).hashCode();
+    // }
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) {
+        if (!(obj instanceof Performer))
             return false;
-        }
+        if (obj == this)
+            return true;
 
-        Performer performer = (Performer) obj;
-
-        return new EqualsBuilder().append(name, performer.name).isEquals();
+        Performer rhs = (Performer) obj;
+        return new EqualsBuilder().
+                append(name, rhs.name).append(imageName,rhs.imageName).append(blurb,rhs.blurb).
+                isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 31).append(name).hashCode();
+        return new HashCodeBuilder(17, 31).
+                append(name).append(imageName).append(blurb).hashCode();
     }
 }
 

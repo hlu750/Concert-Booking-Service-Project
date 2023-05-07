@@ -20,4 +20,6 @@ public class Subscription {
     public AsyncResponse getResponse() {
         return response;
     }
+
+    
 }

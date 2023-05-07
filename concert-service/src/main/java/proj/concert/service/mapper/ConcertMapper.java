@@ -11,7 +11,7 @@ import java.util.List;
  * Mapper class to convert from domain-model to DTO objects representing Concert.
  */
 public class ConcertMapper {
-    public static ConcertDTO toDTO(Concert concert){
+    public static ConcertDTO toConcertDTO(Concert concert){
         ConcertDTO result = new ConcertDTO(concert.getId(),concert.getTitle(),concert.getImageName(),concert.getBlurb());
         result.setDates(new ArrayList<>(concert.getDates()));
         result.setPerformers(PerformerMapper.listToDTO(concert.getPerformers()));
@@ -21,7 +21,7 @@ public class ConcertMapper {
     public static List<ConcertDTO> listToDTO(List<Concert> concerts) {
         List<ConcertDTO> dtoList = new ArrayList<>();
         for (Concert c : concerts) {
-            dtoList.add(ConcertMapper.toDTO(c));
+            dtoList.add(ConcertMapper.toConcertDTO(c));
         }
         return dtoList;
     }

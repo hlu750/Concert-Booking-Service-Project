@@ -10,14 +10,14 @@ import java.util.List;
  * Mapper class to convert from domain-model to DTO objects representing Seats.
  */
 public class SeatMapper {
-    public static SeatDTO toDTO(Seat seat) {
+    public static SeatDTO toSeatDTO(Seat seat) {
         return new SeatDTO(seat.getLabel(), seat.getPrice());
     }
 
     public static List<SeatDTO> listToDTO(List<Seat> seatList) {
         List<SeatDTO> seatDTOList = new ArrayList<>();
         for(Seat s: seatList) {
-            seatDTOList.add(SeatMapper.toDTO(s));
+            seatDTOList.add(SeatMapper.toSeatDTO(s));
         }
         return seatDTOList;
     }

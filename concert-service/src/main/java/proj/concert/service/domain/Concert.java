@@ -33,10 +33,13 @@ public class Concert {
     private String blurb;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    // @CollectionTable(name = "CONCERT_DATES", joinColumns = @JoinColumn(name = "CONCERT_ID"))
+
     @CollectionTable(name = "CONCERT_DATES")
     @Column(name="DATE")
     private Set<LocalDateTime> dates;
 
+    // @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "CONCERT_PERFORMER",
@@ -54,6 +57,11 @@ public class Concert {
         this.blurb = blurb;
         this.performers = performers;
     }
+     // public Concert(String title, String imageName) {
+    //     this.title = title;
+    //     this.imageName = imageName;
+    // }
+
 
     public Long getId() {
         return id;
@@ -103,20 +111,41 @@ public class Concert {
         this.performers = performers;
     }
 
+    // @Override
+    // public boolean equals(Object obj) {
+    //     if (obj == this) return true;
+    //     if (obj == null || obj.getClass() != this.getClass()) {
+    //         return false;
+    //     }
+
+    //     Concert concert = (Concert) obj;
+
+    //     return new EqualsBuilder().append(title, concert.title).isEquals();
+    // }
+
+    // @Override
+    // public int hashCode() {
+    //     return new HashCodeBuilder(17, 31).append(title).hashCode();
+    // }
     @Override
     public boolean equals(Object obj) {
+        // if (!(obj instanceof Concert))
+        //     return false;
+        // if (obj == this)
+        //     return true;
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-
-        Concert concert = (Concert) obj;
-
-        return new EqualsBuilder().append(title, concert.title).isEquals();
+        Concert rhs = (Concert) obj;
+        return new EqualsBuilder().
+                append(title, rhs.title).
+                isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 31).append(title).hashCode();
+        return new HashCodeBuilder(17, 31).
+                append(title).hashCode();
     }
 }

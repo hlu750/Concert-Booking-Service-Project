@@ -19,6 +19,10 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 
+
+// Get all concerts
+
+//concert-service endpoint
 @Path("/concert-service")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -26,10 +30,33 @@ public class ConcertResource {
     private static Logger LOGGER = LoggerFactory.getLogger(ConcertResource.class);
     private static final Map<Long, List<Subscription>> subscribersMap = new HashMap<>();
 
+    // Get a concert by id
+    @GET
+@Path("/concerts") 
+public Response getAllConcerts() {
+    LOGGER.info("Getting all concerts.");
+    EntityManager em = PersistenceManager.instance().createEntityManager();
+
+    try {
+        em.getTransaction().begin();
+
+        List<Concert> concertList = em.createQuery("select c from Concert c", Concert.class)
+                .getResultList();
+
+        em.getTransaction().commit();
+
+        List<ConcertDTO> concertDTOList = ConcertMapper.listToDTO(concertList);
+        GenericEntity<List<ConcertDTO>> entity = new GenericEntity<>(concertDTOList) {};
+        return Response.ok(entity).build();
+    } finally {
+        em.close();
+    }
+
+}
     @GET
     @Path("/concerts/{id}")
     public Response getConcertById(@PathParam("id") Long id) {
-        LOGGER.info("Receiving a concert with id " + id);
+        LOGGER.info("Fetching a concert with id " + id);
         EntityManager em = PersistenceManager.instance().createEntityManager();
 
         try {
@@ -40,43 +67,21 @@ public class ConcertResource {
             em.getTransaction().commit();
 
             if (concert == null) { //No existing concert
-                LOGGER.debug("No concert with id: " + id + " exists");
+                LOGGER.debug("Concert with id: " + id + " does not exists");
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
-            return Response.ok(ConcertMapper.toDTO(concert)).build();
+            return Response.ok(ConcertMapper.toConcertDTO(concert)).build();
         } finally {
             em.close();
         }
     }
-
-    @GET
-    @Path("/concerts")
-    public Response getAllConcerts() {
-        LOGGER.info("Getting all concerts.");
-        EntityManager em = PersistenceManager.instance().createEntityManager();
-
-        try {
-            em.getTransaction().begin();
-
-            List<Concert> concertList = em.createQuery("select c from Concert c", Concert.class)
-                    .getResultList();
-
-            em.getTransaction().commit();
-
-            List<ConcertDTO> concertDTOList = ConcertMapper.listToDTO(concertList);
-            GenericEntity<List<ConcertDTO>> entity = new GenericEntity<>(concertDTOList) {};
-            return Response.ok(entity).build();
-        } finally {
-            em.close();
-        }
-
-    }
-
+    
+    // Get concert summaries
     @GET
     @Path("/concerts/summaries")
     public Response getConcertSummaries() {
-        LOGGER.info("Getting the concert summaries.");
+        LOGGER.info("Fetching the concert summaries.");
         EntityManager em = PersistenceManager.instance().createEntityManager();
 
         try {
@@ -95,37 +100,11 @@ public class ConcertResource {
             em.close();
         }
     }
-
-    @GET
-    @Path("/performers/{id}")
-    public Response getPerformerById(@PathParam("id") Long id) {
-        LOGGER.info("Getting a performer of id " + id);
-        EntityManager em = PersistenceManager.instance().createEntityManager();
-
-        try {
-            em.getTransaction().begin();
-
-            Performer performer = em.find(Performer.class, id);
-
-            em.getTransaction().commit();
-
-            if (performer == null) {
-                LOGGER.debug("No performer with id: " + id + " exists");
-                return Response.status(Response.Status.NOT_FOUND).build();
-            } else {
-                return Response.ok(PerformerMapper.toDTO(performer)).build();
-            }
-
-        } finally {
-            em.close();
-        }
-
-    }
-
+    // Get all performers
     @GET
     @Path("/performers")
     public Response getAllPerformers() {
-        LOGGER.info("Getting all performers.");
+        LOGGER.info("Fetching all performers.");
         EntityManager em = PersistenceManager.instance().createEntityManager();
 
         try {
@@ -143,8 +122,35 @@ public class ConcertResource {
             em.close();
         }
     }
+    // Get performers by id
+    @GET
+    @Path("/performers/{id}")
+    public Response getPerformerById(@PathParam("id") Long id) {
+        LOGGER.info("Fetching a performer of id " + id);
+        EntityManager em = PersistenceManager.instance().createEntityManager();
 
+        try {
+            em.getTransaction().begin();
 
+            Performer performer = em.find(Performer.class, id);
+
+            em.getTransaction().commit();
+
+            if (performer == null) {
+                LOGGER.debug("No performer with id: " + id + " exists");
+                return Response.status(Response.Status.NOT_FOUND).build();
+            } else {
+                return Response.ok(PerformerMapper.toPerformerDTO(performer)).build();
+            }
+
+        } finally {
+            em.close();
+        }
+
+    }
+    
+
+    // Log in endpoint for users
     @POST
     @Path("/login")
     public Response login(UserDTO userDTO) {
@@ -159,11 +165,11 @@ public class ConcertResource {
                     .setParameter("password", userDTO.getPassword())
                     .getResultList();
 
-            if (users.isEmpty()) { //The username is not found or the password is incorrect
+            if (users.isEmpty()) { 
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             } else {
-                User user = users.get(0); //Get the user
-                String token = UUID.randomUUID().toString(); //Generate the token
+                User user = users.get(0); //Get the spefic user
+                String token = UUID.randomUUID().toString(); 
                 user.setCookie(token);
                 em.merge(user);
 
@@ -176,7 +182,57 @@ public class ConcertResource {
             em.close();
         }
     }
+    public User getAuthenticatedUser(EntityManager em, Cookie cookie) {
+        List<User> users = em.createQuery("select u from User u where u.cookie = :cookie", User.class)
+                .setParameter("cookie", cookie.getValue())
+                .getResultList();
 
+        if (users == null) { //Haven't sign up
+            LOGGER.debug("Didn't find the user with cookie.");
+            return null;
+        }
+
+        LOGGER.info("Login successful");
+        User user = users.get(0);
+        return user;
+    }
+// get all bookings for an authenticated user
+    @GET
+    @Path("/bookings")
+    public Response getAllBookingsForUser(@CookieParam("auth") Cookie cookie) {
+        LOGGER.info("Get all the bookings for auth user");
+
+        if (cookie == null) { //User hasn't login yet
+            LOGGER.debug("Didn't provide the cookie");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        EntityManager em = PersistenceManager.instance().createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            User user = this.getAuthenticatedUser(em, cookie);
+
+            if (user == null) { //Haven't sign up
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+
+            List<Booking> bookings = em.createQuery("select b from Booking b where b.user = :user", Booking.class)
+                    .setParameter("user", user)
+                    .getResultList();
+
+            GenericEntity<List<BookingDTO>> entity = new GenericEntity<>(BookingMapper.listToDTO(bookings)){};
+
+            em.getTransaction().commit();
+
+            return Response.ok(entity)
+                    .cookie(new NewCookie("auth", cookie.getValue())).build();
+        } finally {
+            em.close();
+        }
+    }
+    // get all bookings
     @POST
     @Path("/bookings")
     public Response makeABooking(BookingRequestDTO dto, @CookieParam("auth") Cookie cookie) {
@@ -193,7 +249,6 @@ public class ConcertResource {
         try {
             em.getTransaction().begin();
             User user = this.getAuthenticatedUser(em, cookie);
-
             if (user == null) { //Haven't sign up
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
@@ -242,7 +297,7 @@ public class ConcertResource {
             em.close();
         }
     }
-
+    // get booking by id
     @GET
     @Path("/bookings/{id}")
     public Response getOwnBookingById(@PathParam("id") Long id, @CookieParam("auth") Cookie cookie){
@@ -263,63 +318,28 @@ public class ConcertResource {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
-            Booking booking = em.find(Booking.class, id); //Find the booking of that id
+            Booking booking = em.find(Booking.class, id); //Find the booking with the spefic id
 
             if (booking == null) { //Didn't have bookings
                 LOGGER.debug("No booking of id " + id);
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
-            if (booking.getUser().getId() != user.getId()) { //Check if belongs to mine
+            if (booking.getUser().getId() != user.getId()) { //Check if belongs to the spefic user
                 LOGGER.debug("The booking is from others.");
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
 
             em.getTransaction().commit();
 
-            return Response.ok(BookingMapper.toDTO(booking))
+            return Response.ok(BookingMapper.toBookingDTO(booking))
                     .cookie(new NewCookie("auth", cookie.getValue())).build();
         } finally {
             em.close();
         }
     }
-
-    @GET
-    @Path("/bookings")
-    public Response getAllBookingsForUser(@CookieParam("auth") Cookie cookie) {
-        LOGGER.info("Get all the bookings for auth user");
-
-        if (cookie == null) { //User hasn't login yet
-            LOGGER.debug("Didn't provide the cookie");
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-        EntityManager em = PersistenceManager.instance().createEntityManager();
-
-        try {
-            em.getTransaction().begin();
-
-            User user = this.getAuthenticatedUser(em, cookie);
-
-            if (user == null) { //Haven't sign up
-                return Response.status(Response.Status.UNAUTHORIZED).build();
-            }
-
-            List<Booking> bookings = em.createQuery("select b from Booking b where b.user = :user", Booking.class)
-                    .setParameter("user", user)
-                    .getResultList();
-
-            GenericEntity<List<BookingDTO>> entity = new GenericEntity<>(BookingMapper.listToDTO(bookings)){};
-
-            em.getTransaction().commit();
-
-            return Response.ok(entity)
-                    .cookie(new NewCookie("auth", cookie.getValue())).build();
-        } finally {
-            em.close();
-        }
-    }
-
+    
+    // get seats by date
     @GET
     @Path("/seats/{date}")
     public Response getSeats(@PathParam("date") LocalDateTimeParam dateTimeParam, @QueryParam("status") BookingStatus status) {
@@ -331,7 +351,7 @@ public class ConcertResource {
             List<Seat> seats = new ArrayList<>();
 
             if(status != null) {
-                if(status == BookingStatus.Any) { //All seats for that date
+                if(status == BookingStatus.Any) { //Get seats for that date
                     seats = em.createQuery("select seat from Seat seat where seat.date = :date",Seat.class)
                             .setParameter("date", date)
                             .getResultList();
@@ -401,7 +421,7 @@ public class ConcertResource {
             //Store all the matching subs into the new list
             for(Subscription sub:subs) {
                 if( (sub.getDto().getDate().equals(dto.getDate()))
-                        && (this.calPercentage(numOfBookedSeats) > sub.getDto().getPercentageBooked())) {
+                        && (this.seatPercentage(numOfBookedSeats) > sub.getDto().getPercentageBooked())) {
                     newSubs.add(sub);
                 }
             }
@@ -419,24 +439,10 @@ public class ConcertResource {
             subscribersMap.put(dto.getConcertId(), subs);
         }
     }
+    public int seatPercentage(int numOfBookedSeats) {
+        return ( 100 * numOfBookedSeats / TheatreLayout.NUM_SEATS_IN_THEATRE);
+     }
 
-    //=========== HELP METHODS =========
-    public User getAuthenticatedUser(EntityManager em, Cookie cookie) {
-        List<User> users = em.createQuery("select u from User u where u.cookie = :cookie", User.class)
-                .setParameter("cookie", cookie.getValue())
-                .getResultList();
-
-        if (users == null) { //Haven't sign up
-            LOGGER.debug("Didn't find the user with cookie.");
-            return null;
-        }
-
-        LOGGER.info("Login successful");
-        User user = users.get(0);
-        return user;
-    }
-
-    public int calPercentage(int numOfBookedSeats) {
-       return ( 100 * numOfBookedSeats / TheatreLayout.NUM_SEATS_IN_THEATRE);
-    }
+    
+    
 }

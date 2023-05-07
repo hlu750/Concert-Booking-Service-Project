@@ -1,6 +1,10 @@
 package proj.concert.service.domain;
 
 import javax.persistence.*;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -67,6 +71,24 @@ public class Seat {
 
 	public void setPrice(BigDecimal price) {
 		this.price = price;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Seat))
+			return false;
+		if (obj == this)
+			return true;
+
+		Seat rhs = (Seat) obj;
+		return new EqualsBuilder().
+				append(label, rhs.label).append(date,rhs.date)
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 31).
+				append(label).append(date).hashCode();
 	}
 
 }

@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
@@ -29,7 +31,11 @@ public class Booking {
     private User user;
 
     public Booking() {}
-
+    // public Booking(User user,long concertId,LocalDateTime date){
+        //     this.user = user;
+        //     this.concertId = concertId;
+        //     this.date=date;
+        // }
     public Booking(Long concertId, LocalDateTime date, List<Seat> seats, User user) {
         this.date = date;
         this.concertId = concertId;
@@ -76,5 +82,33 @@ public class Booking {
 
     public void setUser(User user) {
         this.user = user;
+    }
+      // public BookingDTO convertToDTO() {
+    //     List<SeatDTO> seatDTOs = new ArrayList<>();
+    //     for (Seat s : seats) {
+    //         seatDTOs.add(s.convertToDTO());
+    //     }
+	// 	return new BookingDTO(concertId, date, seatDTOs);
+	// }
+
+    // add public boolean equals(Object obj) {}
+    // add public int hashCode() {}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Concert))
+            return false;
+        if (obj == this)
+            return true;
+
+        Booking rhs = (Booking) obj;
+        return new EqualsBuilder().
+                append(concertId, rhs.concertId).append(date,rhs.date).append(user,rhs.user).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(concertId).append(date).append(user).hashCode();
     }
 }

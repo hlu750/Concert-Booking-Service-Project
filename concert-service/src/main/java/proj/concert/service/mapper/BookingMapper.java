@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
  * Bookings.
  */
 public class BookingMapper {
-    public static BookingDTO toDTO(Booking booking){
+    public static BookingDTO toBookingDTO(Booking booking){
         return new BookingDTO(booking.getConcertId(), booking.getDate(),
-                booking.getSeats().stream().map(s -> SeatMapper.toDTO(s)).collect(Collectors.toList()));
+                booking.getSeats().stream().map(s -> SeatMapper.toSeatDTO(s)).collect(Collectors.toList()));
     }
 
     public static List<BookingDTO> listToDTO(List<Booking> bookingList) {
         ArrayList<BookingDTO> result = new ArrayList<>();
 
         for (Booking b: bookingList) {
-            result.add(BookingMapper.toDTO(b));
+            result.add(BookingMapper.toBookingDTO(b));
         }
 
         return result;
