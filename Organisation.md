@@ -62,12 +62,10 @@ To ensure that issues arising from concurrent access, such as double-bookings, a
 <!-- How would you extend your web service to add support for the following new features?: -->
 
 <!-- Support for different ticket prices per concert (currently ticket prices are identical for each concert) -->
-To support different ticket prices per concert, we can add a PriceBand entity with a many-to-many relationship to Concert. Each PriceBand would have a name and a price, and a Concert could have multiple PriceBands associated with it. When a client makes a reservation, they would select which PriceBand(s) they want to book seats for, and the total cost would be calculated based on the selected PriceBands.
+To support different ticket prices per concert, we can add a PriceBand entity with a many-to-many relationship to Concert. Each PriceBand would have the attributes; name and price. A Concert can have one or more PriceBands associated with it. When a user makes a booking, they would select what PriceBand/s they want to book seats for.
 
 <!-- Support for multiple venues (currently all concerts are assumed to be at the same venue with an identical seat layout) -->
-To support multiple venues, we can add a new entity for venues and associate it with the concert entity. We can also modify the reservation process to take into account the different seat layouts for each venue.
-
-To support multiple venues, we can add a Venue entity with a one-to-many relationship to Concert. Each Venue would have a name and a layout that specifies the number and arrangement of seats. There could also potentially be more attributes. When a user wants to book seats for a Concert at a venue, the seating would be determined based on the Venue layout.
+To support multiple venues, we can add a Venue entity with a one-to-many relationship to Concert. Each Venue would the attributes; name and layout. The layout specifies the number and arrangement of seats. There could also potentially be more attributes. When a user wants to book seats for a Concert at a venue, the seating would be determined based on the Venue layout.
 
 <!-- Support for "held" seats (where, after a user selects their seats, they are reserved for a period of time to allow the user time to pay. If the user cancels payment, or the time period elapses, the seats are automatically released, able to be booked again by other users). -->
 To support held seats, we can introduce a new status for seats, "held". When a user selects seats, the seats would be marked as "held" for a specified period of time. If the user cancels the payment or the period of time elapses, the seats will automatically be made available again for other users to book. If the user pays within the hold period, the seat would be booked.
