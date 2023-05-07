@@ -36,9 +36,10 @@ To minimise the chance of concurrency errors in the programs execution, we used 
 The domain model is organised around the following entities and are related to each other as follows:
 - Concert: represents a musical performance of one or more performers that takes place on one or more dates.
 - Performer: represents a musician or group who performs at one or more concerts.
-- User: represents a user of a theater.
+- User: represents a user that can log in and book.
 - Seat: represents a seat at the concert, with a specific date and price.
 - Booking: represents a booking for one or more seats at a specific concert date booked by a user.
+- Subscription: represents a subscription where users can subscribe to information regarding concert bookings.
 
 <!-- Points to consider -->
 <!-- To check your understanding of the various concepts used in this project, you should consider the following: -->
